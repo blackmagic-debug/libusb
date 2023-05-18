@@ -1,6 +1,6 @@
 project(
 	'libusb-1.0',
-	'c',
+	'c', 'cpp',
 	version: '1.0.27',
 	meson_version: '>= 0.58',
 	license: 'LGPL-2.1-or-later',
@@ -12,6 +12,8 @@ project(
 	]
 )
 
+lt_version = '0.4.0'
+
 cfg = configuration_data()
 
 create_import_lib = false
@@ -21,8 +23,8 @@ host = target_machine.system()
 
 cc = meson.get_compiler('c')
 
-c_flags = []
-c_link_flags = []
+c_args = []
+c_link_args = []
 
 if ['darwin', 'haiku', 'emscripten', 'linux', 'netbsd', 'openbsd', 'sunos'].contains(host)
 	backend = host
@@ -35,13 +37,13 @@ elif host == 'android'
 elif host == 'cygwin'
 	backend = 'windows'
 	platform = 'windows'
-	c_flags += cc.get_supported_arguments('-mwin32')
+	c_args += cc.get_supported_arguments('-mwin32')
 elif host == 'windows'
 	backend = 'windows'
 	platform = 'windows'
 	create_import_lib = get_option('default_library') != 'static'
-	c_flags += cc.get_supported_arguments('-fno-omit-frame-pointer')
-	c_link_flags += cc.get_supported_arguments('-static-libgcc')
+	c_args += cc.get_supported_arguments('-fno-omit-frame-pointer')
+	c_link_args += cc.get_supported_arguments('-static-libgcc')
 else
 	warning('The host being compiled for is not supported.')
 	warning('The library may compile but will not function in any useful manner.')
@@ -93,7 +95,7 @@ if platform == 'posix'
 	endif
 	message('whether __atomic_load_n is supported... @0@'.format(ac_result))
 elif platform == 'windows'
-	cfg.set10('PLATFORM_POSIX', true, description: 'Define to 1 if compiling for a Windows platform.')
+	cfg.set10('PLATFORM_WINDOWS', true, description: 'Define to 1 if compiling for a Windows platform.')
 else
 	error('Unknown platform')
 endif
@@ -191,7 +193,7 @@ if ['linux', 'sunos'].contains(backend)
 		if cc.has_header('sys/eventfd.h')
 			if cc.has_header_symbol('sys/eventfd.h', 'EFD_NONBLOCK') and cc.has_header_symbol('sys/eventfd.h', 'EFD_CLOEXEC')
 				if cc.has_function('eventfd')
-					conf.set('HAVE_EVENTFD', true, description: 'Define to 1 if the system has eventfd functionality.'')
+					cfg.set('HAVE_EVENTFD', true, description: 'Define to 1 if the system has eventfd functionality.')
 					ac_result = 'yes'
 				elif use_eventfd.enabled()
 					error('eventfd() function not found; glibc 2.9+ required')
@@ -221,7 +223,7 @@ if backend == 'linux' or backend == 'sunos'
 		if cc.has_header('sys/timerfd.h')
 			if cc.has_header_symbol('sys/timerfd.h', 'TFD_NONBLOCK') and cc.has_header_symbol('sys/timerfd.h', 'TFD_CLOEXEC')
 				if cc.has_function('timerfd_create')
-					conf.set('HAVE_TIMERFD', true, description: 'Define to 1 if the system has timerfd functionality.'')
+					cfg.set('HAVE_TIMERFD', true, description: 'Define to 1 if the system has timerfd functionality.')
 					ac_result = 'yes'
 				elif use_timerfd.enabled()
 					error('timerfd_create() function not found; glibc 2.9+ required')
@@ -242,15 +244,14 @@ if backend == 'linux' or backend == 'sunos'
 endif
 
 # Message logging
-conf.set('ENABLE_LOGGING', not get_option('log').disabled(), description: 'Define to 1 to enable message logging.')
+cfg.set('ENABLE_LOGGING', not get_option('log').disabled(), description: 'Define to 1 to enable message logging.')
 
-conf.set('ENABLE_DEBUG_LOGGING', get_option('debug_log').enabled(), description: 'Define to 1 to start with debug message logging enabled.')
+cfg.set('ENABLE_DEBUG_LOGGING', get_option('debug_log').enabled(), description: 'Define to 1 to start with debug message logging enabled.')
 
 if not get_option('system_log').disabled()
-	conf.set('USE_SYSTEM_LOGGING_FACILITY', true, description: 'Define to 1 to output logging messages to the systemwide log.')
+	cfg.set('USE_SYSTEM_LOGGING_FACILITY', true, description: 'Define to 1 to output logging messages to the systemwide log.')
 	if backend != 'windows' and not is_android_linux
 		# Check if syslog is available in standard C library
-		AC_CHECK_HEADER([syslog.h], [syslog_h=yes], [syslog_h=])
 		if cc.has_header('syslog.h')
 			cfg.set('HAVE_SYSLOG', cc.has_function('syslog'))
 		endif
@@ -266,15 +267,15 @@ build_tests = get_option('tests').enabled()
 # The -Wcast-function-type warning causes a flurry of warnings when compiling
 # Windows with GCC 8 or later because of dynamically loaded functions
 if backend == 'windows'
-	c_flags += cc.get_supported_arguments('-Wno-cast-function-type')
+	c_args += cc.get_supported_arguments('-Wno-cast-function-type')
 endif
 
 # Some linkers do not support the '--add-stdcall-alias' option so check for it here
 if backend == 'windows'
-	c_link_flags += cc.get_supported_arguments('-Wl,--add-stdcall-alias')
+	c_link_args += cc.get_supported_link_arguments('-Wl,--add-stdcall-alias')
 endif
 
-c_flags += cc.get_supported_arguments(
+c_args += cc.get_supported_arguments(
 	'-Wshadow',
 	'-Wunused',
 	'-Wwrite-strings',
@@ -291,7 +292,7 @@ c_flags += cc.get_supported_arguments(
 # Meson: set properly some defines up and check pragma warnings up.
 
 cfg.set('_GNU_SOURCE', backend == 'linux' or backend == 'darwin', description: 'Enable GNU extensions.')
-if cc.get_attribute('visibility:default')
+if cc.has_function_attribute('visibility:default')
 	default_visibility = '__attribute__ ((visibility ("default")))'
 else
 	default_visibility = ''
@@ -304,17 +305,22 @@ else
 endif
 cfg.set('PRINTF_FORMAT(a, b)', printf_format, description: 'Define to the attribute for enabling parameter checks on printf-like functions.')
 
-if cc.get_argument_syntax() == 'msvc'
-	msc_ver = cc.get_define('_MSC_VER')
+# Meson: clang-cl in both modes defines _MSC_VER, rendering
+# cc.get_argument_syntax useless to detect MSVC ABI compilers.
+msc_ver = cc.get_define('_MSC_VER')
+
+if msc_ver != ''
 	if msc_ver.version_compare('<1800')
 		error('Visual Studio 2013 or later is required.')
 	elif msc_ver.version_compare('<=1900')
+		# Visual Studio 2013 and 2015 do not support __func__
 		cfg.set('__func__', '__FUNCTION__')
 	elif msc_ver.version_compare('>=1900')
+		# Visual Studio 2015 and later defines timespec
 		cfg.set('_TIMESPEC_DEFINED', true)
 	endif
 
-	c_flags += cc.get_supported_arguments(
+	c_args += cc.get_supported_arguments(
 		# Disable: warning C4127: conditional expression is constant
 		'/wd4127',
 		# Disable: warning C4200: nonstandard extension used : zero-sized array in struct/union
@@ -328,7 +334,7 @@ if cc.get_argument_syntax() == 'msvc'
 	)
 
 	if cc.get_define('_PREFAST_') != ''
-			c_flags += cc.get_supported_arguments(
+			c_args += cc.get_supported_arguments(
 			# Disable "Banned API" errors when using the MS's WDK OACR/Prefast
 			'/wd28719',
 			# Disable "The function 'InitializeCriticalSection' must be called from within a try/except block"
@@ -338,6 +344,26 @@ if cc.get_argument_syntax() == 'msvc'
 	endif
 endif
 
+# Meson: check for getopt.c components.
+# These are hardcoded in the MSVC config file.
+cfg.set10('HAVE_STRING_H', cc.has_header('string.h'))
+
+config_h = configure_file(
+	output: 'config.h',
+	configuration: cfg
+)
+
+fix_def = find_program('meson/fix_def.py', required: true)
+windows = import('windows')
+
+include_directories = [include_directories('.')]
+
+# Meson: set getopt_dep separately.
+needs_getopt = not cc.has_function('getopt')
+
+if needs_getopt
+	subdir('msvc')
+endif
 subdir('libusb')
 subdir('examples')
 subdir('tests')
@@ -346,6 +372,8 @@ subdir('doc')
 pkg = import('pkgconfig')
 
 pkg.generate(
+	libusb,
+	name: meson.project_name(),
 	url: 'https://libusb.info',
 	description: 'C API for USB device access from Linux, Mac OS X, Windows, OpenBSD/NetBSD and Solaris userspace'
 )
