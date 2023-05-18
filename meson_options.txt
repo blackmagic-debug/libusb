@@ -1,0 +1,8 @@
+option('udev', type: 'feature', value: 'enabled', description: 'use udev for device enumeration and hotplug support (recommended)')
+option('eventfd', type: 'feature', description: 'use eventfd for signalling')
+option('timerfd', type: 'feature', description: 'use timerfd for timing')
+option('log', type: 'feature', value: 'enabled', description: 'enable all logging')
+option('debug_log', type: 'feature', value: 'disabled', description: 'start with debug message logging enabled')
+option('system_log', type: 'feature', value: 'disabled', description: 'output logging messages to the systemwide log, if supported by the OS')
+option('examples', type: 'feature', value: 'disabled', description: 'build example applications')
+option('tests', type: 'feature', value: 'disabled', description: 'build test applications')
