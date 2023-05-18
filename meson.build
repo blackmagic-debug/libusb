@@ -365,8 +365,12 @@ if needs_getopt
 	subdir('msvc')
 endif
 subdir('libusb')
-subdir('examples')
-subdir('tests')
+if build_examples
+	subdir('examples')
+endif
+if build_tests
+	subdir('tests')
+endif
 subdir('doc')
 
 pkg = import('pkgconfig')
