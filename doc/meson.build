@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# SPDX-FileCopyrightText: 2023 L. E. Segovia <amy@amyspark.me>
+
 doxygen_exe = find_program('doxygen', required: false)
 
 if doxygen_exe.found()

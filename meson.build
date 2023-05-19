@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# SPDX-FileCopyrightText: 2023 L. E. Segovia <amy@amyspark.me>
+
 project(
 	'libusb-1.0',
 	'c', 'cpp',
