@@ -180,5 +180,11 @@ int libusb_testlib_run_tests(int argc, char *argv[],
 	libusb_testlib_logf("Error in %d tests", error_count);
 	libusb_testlib_logf("Skipped %d tests", skip_count);
 
-	return fail_count + error_count;
+	// https://www.gnu.org/software/gnulib/manual/html_node/Unit-test-modules.html
+	if (skip_count > 0 && (pass_count + skip_count == run_count)) {
+		return 77; // Tests were skipped
+	}
+
+	// 1 if any tests failed or errored, 0 otherwise.
+	return fail_count + error_count ? 1 : 0;
 }
