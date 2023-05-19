@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# SPDX-License-Identifier: BSD-3-Clause
+# SPDX-FileCopyrightText: 2023 L. E. Segovia <amy@amyspark.me>
+
 from argparse import ArgumentParser, FileType
 
 if __name__ == '__main__':
