@@ -126,8 +126,8 @@ elif backend == 'linux'
 	use_udev = not get_option('udev').disabled()
 
 	if use_udev
-		cc.has_header('libudev.h', required: true)
-		udev_dep = dependency('udev', required: true)
+		udev_dep = dependency('libudev', required: true)
+		cc.has_header('libudev.h', dependencies: udev_dep, required: true)
 		if not cc.has_function('udev_new', dependencies: udev_dep)
 			error('udev support requested but libudev not installed')
 		else
