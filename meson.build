@@ -177,7 +177,9 @@ cfg.set('HAVE_SYS_TIME_H', cc.has_header('sys/time.h'))
 
 # check availability of clock_gettime(), except don't bother on Darwin, because the result is not used.
 if platform == 'posix' and backend != 'darwin'
-	cc.has_function('clock_gettime', required: true)
+	if not cc.has_function('clock_gettime', dependencies: deps)
+		error('clock_gettime() is required on this platform')
+	endif
 
 	# the clock_gettime() function needs certain clock IDs defined
 	cc.has_header_symbol('CLOCK_MONOTONIC', prefix: '#include <time.h>', required: true)
@@ -254,7 +256,7 @@ if not get_option('system_log').disabled()
 	if backend != 'windows' and not is_android_linux
 		# Check if syslog is available in standard C library
 		if cc.has_header('syslog.h')
-			cc.has_function('syslog', required: true)
+			cfg.set('HAVE_SYSLOG', cc.has_function('syslog'))
 		endif
 	endif
 endif
