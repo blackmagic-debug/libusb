@@ -135,7 +135,7 @@ elif backend == 'linux'
 		endif
 
 		# We can build umockdev tests (if available)
-		umockdev_dep = dependency('umockdev-1.0', version: '>=0.16.0', disabler: true)
+		umockdev_dep = dependency('umockdev-1.0', version: '>=0.16.0', disabler: true, required: false)
 		if umockdev_dep.found()
 			cfg.set10('UMOCKDEV_HOTPLUG', umockdev_dep.version().version_compare('>=0.17.7'))
 		endif
