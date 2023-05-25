@@ -384,3 +384,5 @@ pkg.generate(
 	url: 'http://libusb.info',
 	description: 'C API for USB device access from Linux, Mac OS X, Windows, OpenBSD/NetBSD and Solaris userspace'
 )
+
+meson.override_dependency(meson.project_name(), libusb_dep)
