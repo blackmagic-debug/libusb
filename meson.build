@@ -132,6 +132,7 @@ elif backend == 'linux'
 			error('udev support requested but libudev not installed')
 		else
 			dependencies += [udev_dep]
+			cfg.set('HAVE_LIBUDEV', true)
 		endif
 
 		# We can build umockdev tests (if available)
