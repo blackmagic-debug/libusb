@@ -182,10 +182,10 @@ if platform == 'posix' and backend != 'darwin'
 	endif
 
 	# the clock_gettime() function needs certain clock IDs defined
-	cc.has_header_symbol('CLOCK_MONOTONIC', prefix: '#include <time.h>', required: true)
+	cc.has_header_symbol('time.h', 'CLOCK_MONOTONIC', required: true)
 	# use the monotonic clock for condition variable timed waits if possible
 	if not cc.has_function('pthread_condattr_setclock', dependencies: dependencies)
-		cc.has_header_symbol('CLOCK_REALTIME', prefix: '#include <time.h>', required: true)
+		cc.has_header_symbol('time.h', 'CLOCK_REALTIME', required: true)
 	endif
 endif
 
@@ -194,7 +194,7 @@ if ['linux', 'sunos'].contains(backend)
 	use_eventfd = get_option('eventfd')
 	if not use_eventfd.disabled()
 		if cc.has_header('sys/eventfd.h')
-			if cc.has_header_symbol('EFD_NONBLOCK', prefix: '#include <sys/eventfd.h>') and cc.has_header_symbol('EFD_CLOEXEC', prefix: '#include <sys/eventfd.h>')
+			if cc.has_header_symbol('sys/eventfd.h', 'EFD_NONBLOCK') and cc.has_header_symbol('sys/eventfd.h', 'EFD_CLOEXEC')
 				if cc.has_function('eventfd')
 					cfg.set('HAVE_EVENTFD', true, description: 'Define to 1 if the system has eventfd functionality.')
 					ac_result = 'yes'
@@ -224,7 +224,7 @@ if backend == 'linux' or backend == 'sunos'
 	use_timerfd = get_option('timerfd')
 	if not use_timerfd.disabled()
 		if cc.has_header('sys/timerfd.h')
-			if cc.has_header_symbol('TFD_NONBLOCK', prefix: '#include <sys/timerfd.h>') and cc.has_header_symbol('TFD_CLOEXEC', prefix: '#include <sys/timerfd.h>')
+			if cc.has_header_symbol('sys/timerfd.h', 'TFD_NONBLOCK') and cc.has_header_symbol('sys/timerfd.h', 'TFD_CLOEXEC')
 				if cc.has_function('timerfd_create')
 					cfg.set('HAVE_TIMERFD', true, description: 'Define to 1 if the system has timerfd functionality.')
 					ac_result = 'yes'
