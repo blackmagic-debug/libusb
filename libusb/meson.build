@@ -79,7 +79,7 @@ elif backend == 'linux'
 	libusb_srcs += files(
 		'os/linux_usbfs.c',
 	)
-	if cfg.get('use_udev')
+	if use_udev
 		libusb_srcs += files(
 			'os/linux_udev.c',
 		)
