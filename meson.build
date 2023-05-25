@@ -177,7 +177,7 @@ cfg.set('HAVE_SYS_TIME_H', cc.has_header('sys/time.h'))
 
 # check availability of clock_gettime(), except don't bother on Darwin, because the result is not used.
 if platform == 'posix' and backend != 'darwin'
-	if not cc.has_function('clock_gettime', dependencies: deps)
+	if not cc.has_function('clock_gettime', dependencies: dependencies)
 		error('clock_gettime() is required on this platform')
 	endif
 
