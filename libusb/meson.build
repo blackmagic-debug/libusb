@@ -18,12 +18,12 @@ libusb_srcs = files(
 
 if platform == 'posix'
 	libusb_headers += files(
-		'os/events_posix.c',
-		'os/threads_posix.c',
-	)
-	libusb_srcs += files(
 		'os/events_posix.h',
 		'os/threads_posix.h',
+	)
+	libusb_srcs += files(
+		'os/events_posix.c',
+		'os/threads_posix.c',
 	)
 else
 	libusb_headers += files(

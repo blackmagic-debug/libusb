@@ -105,7 +105,7 @@ endif
 
 if backend == 'darwin'
 	cfg.set('HAVE_PTHREAD_THREADID_NP', cc.has_function('pthread_threadid_np', dependencies: dependencies))
-	add_language('objc', required: true)
+	add_languages('objc', required: true)
 	dependencies += [
 		cc.find_library('objc', required: true),
 		dependency('IOKit', required: true, method: 'extraframework'),
