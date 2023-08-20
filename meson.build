@@ -290,7 +290,13 @@ c_args += cc.get_supported_arguments(
 	'-Werror=missing-prototypes',
 	'-Werror=strict-prototypes',
 	'-Werror=undef',
-	'-Werror=uninitialized'
+	'-Werror=uninitialized',
+
+	'-wd4820', # msvc doesn't support packing structures through attributes
+	'-wd4623', # deleted ctors
+	'-wd4626',
+	'-wd4627',
+	'-wd5027',
 )
 
 # Meson: set properly some defines up and check pragma warnings up.
