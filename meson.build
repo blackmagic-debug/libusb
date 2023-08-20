@@ -12,6 +12,7 @@ project(
 		'warning_level=1',
 		'b_pie=true',
 		'b_lto=true',
+		'cpp_eh=s',
 	]
 )
 
