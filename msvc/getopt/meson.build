@@ -11,8 +11,14 @@ getopt_srcs = files(
 )
 
 getopt_c_args = c_args + [
-	'-DHAVE_CONFIG_H'
-] + cc.get_supported_arguments('/wd4100', '/wd4131')
+	'-DHAVE_CONFIG_H',
+	'-DHAVE_LIBINTL_H=0'
+] + cc.get_supported_arguments(
+	'/wd4100',
+	'/wd4131',
+	'-Wno-error=strict-prototypes',
+	'-Wno-error=missing-prototypes'
+)
 
 getopt_lib = static_library(
 	'getopt',
