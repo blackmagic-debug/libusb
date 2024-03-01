@@ -100,6 +100,7 @@ elif backend == 'emscripten'
 		libusb_emscripten_sources,
 		extra_files: libusb_emscripten_headers,
 		c_args: c_args,
+		cpp_args: c_args + ['-std=c++20'],
 		link_args: c_link_args,
 		gnu_symbol_visibility: 'hidden',
 		dependencies: dependencies,

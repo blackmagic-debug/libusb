@@ -160,9 +160,12 @@ elif backend == 'windows'
 	cfg.set('HAVE_STRUCT_TIMESPEC', cc.has_type('struct timespec', prefix: '#include <time.h>'))
 	cfg.set('_WIN32_WINNT', '_WIN32_WINNT_VISTA', description: 'Define to the oldest supported Windows version.')
 elif backend == 'emscripten'
-	c_link_args += [
+	en_link_args = [
 		'--bind',
 		'-s', 'ASYNCIFY',
+	]
+	c_link_args += [
+		en_link_args,
 		'-s', 'ASSERTIONS',
 		'-s', 'ALLOW_MEMORY_GROWTH'
 	]
