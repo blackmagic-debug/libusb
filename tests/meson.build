@@ -82,6 +82,21 @@ test('stress_mt', stress_mt_exe)
 test('set_option', set_option_exe)
 test('init_context', init_context_exe)
 
+if backend == 'darwin'
+macos_sourecs = files(
+	'macos.c'
+)
+
+macos_exe = executable(
+	'macos',
+	macos_sourecs,
+	dependencies: testlib,
+	install: false,
+)
+
+test('macos', macos_exe)
+endif
+
 if backend == 'linux'
 	# NOTE: We add libumockdev-preload.so so that we can run tests in-process
 	#       We also use -Wl,-lxxx as the compiler doesn't need it and libtool
