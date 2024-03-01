@@ -37,10 +37,21 @@ stress_mt_sources = files(
 	'stress_mt.c',
 )
 
+if backend == 'emscripten'
+	stress_mt_link_args = [
+		'-s', 'PROXY_TO_PTHREAD',
+		'-s', 'EXIT_RUNTIME'
+	]
+else
+	stress_mt_link_args = []
+endif
+
 stress_mt_exe = executable(
 	'stress_mt',
 	stress_mt_sources,
-	dependencies: testlib,
+	link_args: stress_mt_link_args,
+	dependencies: [testlib, thread_dep],
+	override_options: ['prefer_static=true'],
 	install: false,
 )
 

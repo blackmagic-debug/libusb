@@ -160,14 +160,11 @@ elif backend == 'windows'
 	cfg.set('HAVE_STRUCT_TIMESPEC', cc.has_type('struct timespec', prefix: '#include <time.h>'))
 	cfg.set('_WIN32_WINNT', '_WIN32_WINNT_VISTA', description: 'Define to the oldest supported Windows version.')
 elif backend == 'emscripten'
-	EXEEXT = '.html'
 	c_link_args += [
 		'--bind',
 		'-s', 'ASYNCIFY',
 		'-s', 'ASSERTIONS',
-		'-s', 'ALLOW_MEMORY_GROWTH',
-		'-s', 'INVOKE_RUN=0',
-		'-s', 'EXPORTED_RUNTIME_METHODS=[\'callMain\']'
+		'-s', 'ALLOW_MEMORY_GROWTH'
 	]
 else
 	# no special handling required
