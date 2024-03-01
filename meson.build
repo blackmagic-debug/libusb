@@ -5,7 +5,7 @@ project(
 	'libusb-1.0',
 	'c', 'cpp',
 	version: '1.0.27',
-	meson_version: '>= 0.58',
+	meson_version: '>= 0.59',
 	license: 'LGPL-2.1-or-later',
 	default_options: [
 		'c_std=gnu11',
@@ -381,7 +381,9 @@ endif
 if build_tests
 	subdir('tests')
 endif
-subdir('doc')
+if get_option('docs').allowed()
+	subdir('doc')
+endif
 
 pkg = import('pkgconfig')
 

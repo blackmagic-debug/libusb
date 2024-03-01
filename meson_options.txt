@@ -9,3 +9,4 @@ option('debug_log', type: 'feature', value: 'disabled', description: 'start with
 option('system_log', type: 'feature', value: 'disabled', description: 'output logging messages to the systemwide log, if supported by the OS')
 option('examples', type: 'feature', value: 'disabled', description: 'build example applications')
 option('tests', type: 'feature', value: 'disabled', description: 'build test applications')
+option('docs', type: 'feature', value: 'auto', description: 'build documentation')
