@@ -3,7 +3,7 @@
 
 project(
 	'libusb-1.0',
-	'c', 'cpp',
+	'c',
 	version: '1.0.27',
 	meson_version: '>= 0.59',
 	license: 'LGPL-2.1-or-later',
@@ -23,9 +23,15 @@ cfg = configuration_data()
 create_import_lib = false
 is_android_linux = false
 
-host = target_machine.system()
+native = meson.is_cross_build() and get_option('build_native')
+if native
+	host = build_machine.system()
+else
+	host = target_machine.system()
+endif
 
-cc = meson.get_compiler('c')
+cc = meson.get_compiler('c', native: native)
+add_languages('cpp', native: native)
 
 c_args = []
 c_link_args = []
@@ -57,7 +63,7 @@ endif
 
 message('Checking operating system... @0@'.format(backend))
 
-thread_dep = dependency('threads')
+thread_dep = dependency('threads', native: native)
 
 dependencies = [thread_dep]
 
@@ -127,7 +133,7 @@ elif backend == 'linux'
 	use_udev = not get_option('udev').disabled()
 
 	if use_udev
-		udev_dep = dependency('libudev', required: true)
+		udev_dep = dependency('libudev', required: true, native: native)
 		cc.has_header('libudev.h', dependencies: udev_dep, required: true)
 		if not cc.has_function('udev_new', dependencies: udev_dep)
 			error('udev support requested but libudev not installed')
@@ -137,7 +143,7 @@ elif backend == 'linux'
 		endif
 
 		# We can build umockdev tests (if available)
-		umockdev_dep = dependency('umockdev-1.0', version: '>=0.16.0', disabler: true, required: false)
+		umockdev_dep = dependency('umockdev-1.0', version: '>=0.16.0', disabler: true, required: false, native: native)
 		if umockdev_dep.found()
 			cfg.set10('UMOCKDEV_HOTPLUG', umockdev_dep.version().version_compare('>=0.17.7'))
 		endif
@@ -363,7 +369,7 @@ config_h = configure_file(
 	configuration: cfg
 )
 
-fix_def = find_program('meson/fix_def.py', required: true)
+fix_def = find_program('meson/fix_def.py', required: true, native: true)
 windows = import('windows')
 
 include_directories = [include_directories('.')]
@@ -394,4 +400,4 @@ pkg.generate(
 	description: 'C API for USB device access from Linux, Mac OS X, Windows, OpenBSD/NetBSD and Solaris userspace'
 )
 
-meson.override_dependency(meson.project_name(), libusb_dep)
+meson.override_dependency(meson.project_name(), libusb_dep, native: native)

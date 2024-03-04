@@ -15,6 +15,7 @@ testlib_lib = static_library(
 	include_directories: include_directories,
 	extra_files: testlib_headers,
 	dependencies: libusb_dep,
+	native: native,
 )
 
 testlib = declare_dependency(
@@ -31,6 +32,7 @@ stress_exe = executable(
 	stress_sources,
 	dependencies: testlib,
 	install: false,
+	native: native,
 )
 
 stress_mt_sources = files(
@@ -53,6 +55,7 @@ stress_mt_exe = executable(
 	dependencies: [testlib, thread_dep],
 	override_options: ['prefer_static=true'],
 	install: false,
+	native: native,
 )
 
 set_option_sources = files(
@@ -64,6 +67,7 @@ set_option_exe = executable(
 	set_option_sources,
 	dependencies: testlib,
 	install: false,
+	native: native,
 )
 
 init_context_sources = files(
@@ -75,6 +79,7 @@ init_context_exe = executable(
 	init_context_sources,
 	dependencies: testlib,
 	install: false,
+	native: native,
 )
 
 test('stress', stress_exe)
@@ -92,6 +97,7 @@ macos_exe = executable(
 	macos_sourecs,
 	dependencies: testlib,
 	install: false,
+	native: native,
 )
 
 test('macos', macos_exe)
@@ -122,6 +128,7 @@ if backend == 'linux'
 		umockdev_sources,
 		dependencies: [testlib, libumockdev_preload_dep],
 		install: false,
+		native: native,
 	)
 
 	test('umockdev', umockdev_exe)

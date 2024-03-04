@@ -69,6 +69,7 @@ elif backend == 'haiku'
 		dependencies: dependencies,
 		version: meson.project_version(),
 		install: false,
+		native: native,
 	)
 
 	platform_libs += libusb_haiku
@@ -106,6 +107,7 @@ elif backend == 'emscripten'
 		dependencies: dependencies,
 		version: meson.project_version(),
 		install: false,
+		native: native,
 	)
 
 	platform_libs += libusb_emscripten
@@ -172,6 +174,7 @@ libusb = library(
 	vs_module_defs: libusb_def,
 	version: lt_version,
 	install: true,
+	native: native,
 )
 
 pkginclude_headers = files(

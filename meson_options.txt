@@ -10,3 +10,4 @@ option('system_log', type: 'feature', value: 'disabled', description: 'output lo
 option('examples', type: 'feature', value: 'disabled', description: 'build example applications')
 option('tests', type: 'feature', value: 'disabled', description: 'build test applications')
 option('docs', type: 'feature', value: 'auto', description: 'build documentation')
+option('build_native', type: 'boolean', value: false, description: 'build targets for the build machine instead of the host machine')

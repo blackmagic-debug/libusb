@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SPDX-FileCopyrightText: 2023 L. E. Segovia <amy@amyspark.me>
 
-doxygen_exe = find_program('doxygen', required: false)
+doxygen_exe = find_program('doxygen', required: false, native: true)
 
 if doxygen_exe.found()
 	doxygen_conf = configuration_data()
@@ -29,4 +29,3 @@ if doxygen_exe.found()
 		install_dir: get_option('datadir') / 'doc' / meson.project_name(),
 	)
 endif
-

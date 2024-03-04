@@ -27,6 +27,7 @@ getopt_lib = static_library(
 	c_args: getopt_c_args,
 	include_directories: include_directories,
 	install: false,
+	native: native
 )
 
 getopt_dep = declare_dependency(

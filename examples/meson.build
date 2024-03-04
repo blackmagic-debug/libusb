@@ -19,6 +19,7 @@ foreach example: examples
 		c_args: c_args,
 		dependencies: libusb_dep,
 		install: false,
+		native: native,
 	)
 endforeach
 
@@ -30,6 +31,7 @@ executable(
 	cpp_args: c_args + ['-DDPFP_THREADED'],
 	dependencies: [libusb_dep, thread_dep],
 	install: false,
+	native: native,
 )
 
 ezusb_lib = static_library(
@@ -40,6 +42,7 @@ ezusb_lib = static_library(
 	c_args: c_args,
 	dependencies: libusb_dep,
 	install: false,
+	native: native,
 )
 
 executable(
@@ -51,4 +54,5 @@ executable(
 	dependencies: libusb_dep,
 	link_with: ezusb_lib,
 	install: false,
+	native: native,
 )
