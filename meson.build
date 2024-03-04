@@ -33,6 +33,7 @@ endif
 cc = meson.get_compiler('c', native: native)
 add_languages('cpp', native: native)
 
+install_targets = get_option('install_targets')
 c_args = []
 c_link_args = []
 

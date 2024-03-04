@@ -173,7 +173,7 @@ libusb = library(
 	include_directories: include_directories,
 	vs_module_defs: libusb_def,
 	version: lt_version,
-	install: true,
+	install: install_targets,
 	native: native,
 )
 

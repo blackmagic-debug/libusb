@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SPDX-FileCopyrightText: 2023 L. E. Segovia <amy@amyspark.me>
 
+option('install_targets', type: 'boolean', value: true, description: 'whether to install the built targets')
 option('udev', type: 'feature', value: 'enabled', description: 'use udev for device enumeration and hotplug support (recommended)')
 option('eventfd', type: 'feature', description: 'use eventfd for signalling')
 option('timerfd', type: 'feature', description: 'use timerfd for timing')

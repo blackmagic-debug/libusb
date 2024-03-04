@@ -25,7 +25,7 @@ if doxygen_exe.found()
 			'libusb.png',
 		),
 		console: true,
-		install: true,
+		install: install_targets,
 		install_dir: get_option('datadir') / 'doc' / meson.project_name(),
 	)
 endif
