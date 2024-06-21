@@ -27,7 +27,7 @@ native = meson.is_cross_build() and get_option('build_native')
 if native
 	host = build_machine.system()
 else
-	host = target_machine.system()
+	host = host_machine.system()
 endif
 
 cc = meson.get_compiler('c', native: native)
@@ -113,12 +113,10 @@ endif
 
 if backend == 'darwin'
 	cfg.set('HAVE_PTHREAD_THREADID_NP', cc.has_function('pthread_threadid_np', dependencies: dependencies))
-	add_languages('objc', required: true)
+	add_languages('objc', required: true, native: native)
 	dependencies += [
 		cc.find_library('objc', required: true),
-		dependency('IOKit', required: true, method: 'extraframework'),
-		dependency('CoreFoundation', required: true, method: 'extraframework'),
-		dependency('Security', required: true, method: 'extraframework'),
+		dependency('appleframeworks', modules: ['IOKit', 'CoreFoundation', 'Security'], required: true, native: native),
 	]
 	cfg.set('HAVE_IOKIT_USB_IOUSBHOSTFAMILYDEFINITIONS_H', cc.has_header('IOKit/usb/IOUSBHostFamilyDefinitions.h', dependencies: dependencies))
 elif backend == 'haiku'
